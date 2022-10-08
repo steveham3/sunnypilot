@@ -111,7 +111,8 @@ def create_ui_commands(packer, CP, pcm_speed, hud, is_metric, idx, stock_hud, ga
         'ENABLE_MINI_CAR': 1,
         'SET_TO_1': 1,
         'HUD_LEAD': hud.car,
-        'HUD_DISTANCE': gap_adjust_cruise,
+        'HUD_DISTANCE_3': 1 if hud.car != 0 else 0,   #show distance bars
+        'HUD_DISTANCE': gap_adjust_cruise,    #0=far, 3=normal, 2=relaxed, 1=traffic
         'ACC_ON': hud.car != 0,
         'SET_TO_X1': 1,
         'IMPERIAL_UNIT': int(not is_metric),
@@ -124,7 +125,8 @@ def create_ui_commands(packer, CP, pcm_speed, hud, is_metric, idx, stock_hud, ga
         'CRUISE_SPEED': hud.v_cruise,
         'ENABLE_MINI_CAR': 1,
         'HUD_LEAD': hud.car,
-        'HUD_DISTANCE': gap_adjust_cruise,    # max distance setting on display
+        'HUD_DISTANCE_3': 1 if hud.car != 0 else 0,   #show distance bars
+        'HUD_DISTANCE': gap_adjust_cruise,    #0=far, 3=normal, 2=relaxed, 1=traffic
         'IMPERIAL_UNIT': int(not is_metric),
         'SET_ME_X01_2': 1,
         'SET_ME_X01': 1,
