@@ -204,6 +204,7 @@ class CarState(CarStateBase):
     self.acc_active = False
     self.cruise_active = False
     self.gap_adjust_cruise_tr = 0
+    self.gap_adjust_cruise_counter = 0.
 
   def update(self, cp, cp_cam, cp_body):
     ret = car.CarState.new_message()
@@ -281,14 +282,16 @@ class CarState(CarStateBase):
 
     if self.CP.openpilotLongitudinalControl:
       if self.gap_adjust_cruise:
-        if self.prev_cruise_setting != 3: # DISTANCE_ADJ
-          if self.cruise_setting == 3:
-            self.gap_adjust_cruise_tr -= 1
-            if self.gap_adjust_cruise_tr < 0:
-              self.gap_adjust_cruise_tr = 3
-            Params().put("GapAdjustCruiseTr", str(self.gap_adjust_cruise_tr))
-      else:
-        self.gap_adjust_cruise_tr = 0
+        if self.cruise_setting == 3:  # DISTANCE_ADJ
+          self.gap_adjust_cruise_counter += 1
+        elif self.prev_cruise_setting == 3 and self.cruise_setting != 3 and self.gap_adjust_cruise_counter < 50:  # DISTANCE_ADJ
+          self.gap_adjust_cruise_counter = 0
+          self.gap_adjust_cruise_tr -= 1
+          if self.gap_adjust_cruise_tr < 0:
+            self.gap_adjust_cruise_tr = 3
+          Params().put("GapAdjustCruiseTr", str(self.gap_adjust_cruise_tr))
+        else:
+          self.gap_adjust_cruise_counter = 0
     ret.gapAdjustCruiseTr = self.gap_adjust_cruise_tr
 
     if self.CP.carFingerprint in (CAR.CIVIC, CAR.ODYSSEY, CAR.ODYSSEY_CHN, CAR.CRV_5G, CAR.ACCORD, CAR.ACCORDH, CAR.CIVIC_BOSCH,
